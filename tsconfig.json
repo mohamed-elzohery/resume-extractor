@@ -13,7 +13,7 @@
     "noUncheckedIndexedAccess": true,
     "noImplicitOverride": true,
 
-    "module": "NodeNext",
+    "module": "preserve",
     "outDir": "dist",
     "rootDir": "src",
     "sourceMap": true,
