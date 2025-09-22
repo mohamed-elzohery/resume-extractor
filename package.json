@@ -1,0 +1,36 @@
+{
+  "name": "resume-extractor",
+  "version": "1.0.0",
+  "description": "resume extractor package. Extract resume sections into structured JSON",
+  "scripts": {
+    "build": "tsc",
+    "ci": "npm run build",
+    "format": "prettier --write ."
+  },
+  "keywords": [
+    "resume",
+    "parsing",
+    "ai",
+    "extraction",
+    "structured data"
+  ],
+  "homepage": "https://github.com/mohamed-elzohery/resume-extractor",
+  "bugs": {
+    "url": "https://github.com/mohamed-elzohery/resume-extractor/issues"
+  },
+  "author": "Mohamed Elzohery <mohamed.sayed.elzohery@gmail.com> (https://elzohery.vercel.app.com)",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mohamed-elzohery/resume-extractor.git"
+  },
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "main": "dist/index.js",
+  "license": "MIT",
+  "devDependencies": {
+    "prettier": "^3.6.2",
+    "typescript": "^5.9.2"
+  }
+}
