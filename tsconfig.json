@@ -18,8 +18,12 @@
     "rootDir": "src",
     "sourceMap": true,
 
-    "declaration": true,
-
-    "declarationMap": true
-  }
+    "declaration": true
+  },
+  "exclude": [
+    "**/*.test.ts",
+    "**/*.test.js",
+    "**/*.spec.ts",
+    "**/*.spec.js"
+  ]
 }
