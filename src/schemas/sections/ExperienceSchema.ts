@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { DateSchema } from '../base/BaseSchema';
 
-export const ExperienceSchema = z.array(z.object({
+export const ExperienceSchema = z.object({
     title: z.string().describe("Exact job title as written in the resume, like 'Senior Software Engineer'."),
     company: z.string().nullable().describe("Full company name exactly as written in the resume."),
     location: z.string().nullable().describe("The location of the job. This could be a city, state, or country. Also, it can be remote."),
@@ -11,6 +11,6 @@ export const ExperienceSchema = z.array(z.object({
     end_date: DateSchema.nullable(),
     department: z.string().nullable().describe("Specific department, division, or team if mentioned."),
     is_current: z.boolean().nullable()
-}).describe("Work Experience / Professional Experience / Employment History"));
+}).describe("Work Experience / Professional Experience / Employment History");
 
 export type Experience = z.infer<typeof ExperienceSchema>;
