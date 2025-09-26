@@ -6,3 +6,9 @@ export const DateSchema = z.object({
     month: z.number().min(1).max(12).nullable().describe("Month as a number between 1 and 12")
 });
 export type DateType = z.infer<typeof DateSchema>;
+
+export const LocationSchema = z.object({
+    country: z.string().nullable(),
+    city: z.string().nullable()
+});
+export type LocationType = z.infer<typeof LocationSchema>;
