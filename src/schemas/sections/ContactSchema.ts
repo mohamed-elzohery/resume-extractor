@@ -9,8 +9,8 @@ export const ContactSchema = z.object({
     location: LocationSchema.nullable(),
     email: z.email().nullable(),
     social_links: z.array(z.object({
-        platform: z.enum(["LinkedIn", "GitHub", "Twitter", "Facebook", "Instagram", "Personal Website", "Other"]),
-        url: z.string().describe("URL of the user profile on the specified platform")
+        platform: z.enum(["LinkedIn", "GitHub", "Twitter", "Facebook", "Instagram"]).describe("Social platform name, MUST be one of the specified enum values"),
+        url: z.string().describe("the url or username of the user profile on the specified platform.")
     }))
 });
 
