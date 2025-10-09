@@ -31,6 +31,18 @@ export const extractWithLLM = async ({
         throw new Error('At least one resume file is required for extraction.');
     }
 
+    const allowedMimeTypes = new Set([
+        'application/pdf',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    ]);
+
+    files.forEach((file) => {
+        const mimeType = file.mimeType ?? 'application/pdf';
+        if (!allowedMimeTypes.has(mimeType) && !mimeType.startsWith('image/')) {
+            throw new Error(`Unsupported file mime type: ${mimeType}`);
+        }
+    });
+
     const messages: any[] = [];
 
     if (systemPrompt) {
