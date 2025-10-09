@@ -7,11 +7,7 @@ export const ContactSchema = z.object({
     phone: z.string().nullable().describe("Phone number for contacting the individual."),
     title: z.string().nullable().describe("Professional title or designation, such as 'Software Engineer', 'Marketing Specialist' or 'Accountant'"),
     location: LocationSchema.nullable(),
-    email: z.email().nullable(),
-    social_links: z.array(z.object({
-        platform: z.enum(["LinkedIn", "GitHub", "Twitter", "Facebook", "Instagram"]).describe("Social platform name, MUST be one of the specified enum values"),
-        url: z.string().describe("the url or username of the user profile on the specified platform.")
-    }))
+    email: z.email().nullable()
 });
 
 export type Contact = z.infer<typeof ContactSchema>;

@@ -8,3 +8,4 @@ export { LanguageExtractor } from './implementations/LanguageExtractor';
 export { SummaryExtractor } from './implementations/SummaryExtractor';
 export { HonorsExtractor } from './implementations/HonorsExtractor';
 export { ProjectExtractor } from './implementations/ProjectExtractor';
+export { SocialLinksExtractor } from './implementations/SocialLinksExtractor';

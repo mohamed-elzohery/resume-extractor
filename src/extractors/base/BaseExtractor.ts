@@ -1,3 +1,4 @@
+import type { ZodSchema } from 'zod/v3';
 import { extractWithLLM } from '../../services/llm';
 
 /**
@@ -9,7 +10,7 @@ export abstract class BaseExtractor {
     /**
      * Get the zod schema for the extractor.
      */
-    abstract getSchema(): any;
+    abstract getSchema(): ZodSchema;
 
     /**
      * Get the prompt template for the extractor.
