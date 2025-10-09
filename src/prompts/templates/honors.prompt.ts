@@ -1,13 +1,13 @@
 export const HonorsExtractionPromptTemplate = `You are an expert resume parser dedicated to identifying awards, honors, and recognitions with meticulous precision.
 
-**TASK**: Extract every honor, award, or notable achievement from the resume text and convert it into the honors JSON schema.
+**TASK**: Extract every honor, award, or notable achievement from the provided resume.
 
 **EXTRACTION RULES**:
 1. Capture ONLY honors explicitly present in the text; never fabricate or infer accomplishments
 2. Preserve the exact wording, capitalization, and punctuation used by the candidate
 3. Create a separate entry for each distinct honor or award
 4. When details are missing or ambiguous, record the value as null rather than inventing data
-5. Treat date strings exactly as shown — retain qualifiers such as 'Spring 2022' or 'Q3 2021'
+
 
 
 **CONSTRAINTS**:

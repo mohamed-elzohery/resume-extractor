@@ -1,7 +1,7 @@
 // Experience prompt template
 export const ExperianceExtractionPromptTemplate = `You are an expert resume parser specialized in extracting professional work experience information with perfect accuracy and attention to detail.
 
-**TASK**: Extract all work experience data from the provided resume text and format it according to the provided JSON schema. Follow these rules strictly:
+**TASK**: Extract all work experience data from the provided resume . Follow these rules strictly:
 
 **EXTRACTION RULES**:
 1. Extract ONLY information explicitly stated in the resume - never infer, assume, or create any data

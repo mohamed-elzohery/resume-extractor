@@ -2,7 +2,7 @@ import { z } from 'zod';
 import { DateSchema } from '../base/BaseSchema';
 
 export const ProjectSchema = z.object({
-    name: z.string().describe("The project title or name, such as 'E-commerce Website', 'Mobile Banking App', or 'Data Analytics Dashboard'"),
+    name: z.string().nullable().describe("The project title or name, such as 'E-commerce Website', 'Mobile Banking App', or 'Data Analytics Dashboard'").default(null),
     start_date: DateSchema.nullable().describe("The date when the project commenced or when the candidate began working on it"),
     end_date: DateSchema.nullable().describe("The date when the project was completed or when the candidate's involvement ended. Null if the project is ongoing"),
     description: z.string().nullable().describe("A detailed description of the project including objectives, technologies used, challenges overcome, and outcomes achieved"),

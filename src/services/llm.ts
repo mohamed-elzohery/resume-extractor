@@ -6,7 +6,7 @@ import type { ResumeFile } from '../types/extractor.types';
 
 dotenv.config();
 
-const model = openai('gpt-4o-mini');
+const model = openai('gpt-5-nano');
 
 export interface LLMExtractionOptions {
     schema: ZodSchema;
@@ -74,9 +74,9 @@ export const extractWithLLM = async ({
         messages,
         schema,
         output,
+        mode: "auto",
         maxRetries: 0,
-        temperature: 0,
-    });
+    })
 
     return object;
 };

@@ -7,7 +7,7 @@ export const ContactSchema = z.object({
     phone: z.string().nullable().describe("Phone number for contacting the individual."),
     title: z.string().nullable().describe("Professional title or designation, such as 'Software Engineer', 'Marketing Specialist' or 'Accountant'"),
     location: LocationSchema.nullable(),
-    email: z.email().nullable()
+    email: z.string().email().nullable()
 }).partial();
 
 export type Contact = z.infer<typeof ContactSchema>;

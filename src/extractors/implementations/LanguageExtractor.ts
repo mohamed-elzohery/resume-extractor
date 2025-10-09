@@ -1,7 +1,6 @@
 import { BaseExtractor } from '../base/BaseExtractor';
 import { LanguageSchema } from '../../schemas/sections/LanguageSchema';
 import { LanguagesExtractionPromptTemplate } from '../../prompts/templates/language.prompt';
-import { z } from 'zod';
 
 /**
  * Language extractor implementation for extracting language proficiencies.

@@ -1,6 +1,6 @@
 export const LanguagesExtractionPromptTemplate = `You are an expert resume parser specializing in identifying language proficiencies with strict adherence to schema validation.
 
-**TASK**: Extract all language competencies explicitly stated in the resume and represent them according to the provided JSON schema. Follow these rules strictly:
+**TASK**: Extract all language competencies explicitly stated in the resume and represent them according. Follow these rules strictly:
 
 **EXTRACTION RULES**:
 1. Capture ONLY languages expressly mentioned by the candidate — do not infer from names, locations, or nationality
