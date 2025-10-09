@@ -23,7 +23,4 @@ export const SummaryExtractionPromptTemplate = `You are an expert resume parser 
 - Sections titled 'Summary', 'Professional Summary', 'Objective', 'Profile', 'About Me', 'Career Snapshot', or similar
 - Introductory paragraphs preceding the experience section
 - Sidebars or callouts highlighting a personal branding statement
-
-**OUTPUT FORMAT**:
-- Return a JSON object matching the summary schema
-- Do not add extra keys or wrap the response in additional prose`
+`

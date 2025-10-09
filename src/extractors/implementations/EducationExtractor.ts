@@ -8,7 +8,7 @@ import { z } from 'zod';
  */
 export class EducationExtractor extends BaseExtractor {
     getSchema(): any {
-        return z.array(EducationSchema);
+        return EducationSchema;
     }
 
     getPromptTemplate(): string {

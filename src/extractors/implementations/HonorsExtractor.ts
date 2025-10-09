@@ -8,7 +8,7 @@ import { z } from 'zod';
  */
 export class HonorsExtractor extends BaseExtractor {
     getSchema(): any {
-        return z.array(HonorsSchema);
+        return HonorsSchema;
     }
 
     getPromptTemplate(): string {

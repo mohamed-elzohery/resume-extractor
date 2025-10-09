@@ -2,7 +2,7 @@ export const SocialLinksExtractionPromptTemplate = `You are a precise data extra
 
 CRITICAL INSTRUCTIONS:
 - Extract ONLY social media profile links that are explicitly mentioned in the text
-- Return ONLY links that match the predefined social media platforms in the enum
+- Return ONLY links that match the predefined social media platforms in the enum schema
 - If a platform is not found, do not include it in the output
 - Do not fabricate or guess any links
 - Return valid JSON that can be parsed with json.loads()

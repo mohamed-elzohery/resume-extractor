@@ -26,10 +26,6 @@ If the resume supplies a numeric or percentage proficiency, translate it proport
 - Sections labeled 'Skills', 'Technical Skills', 'Competencies', 'Core Strengths', or similar
 - Bullet lists enumerating tools, languages, frameworks, or soft skills
 - Summaries or sidebars that explicitly mention expertise areas
-
-**OUTPUT FORMAT**:
-- Return a JSON array named 'skills'
-- Each element MUST align with the skills schema
-- Avoid any additional narrative outside of the JSON payload`
+`
 
 export const SkillsPromptTemplate = SkillsExtractionPromptTemplate;

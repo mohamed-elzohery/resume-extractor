@@ -8,6 +8,6 @@ export const EducationSchema = z.object({
     description: z.string().nullable().describe("additional details about the educational experience, including relevant coursework, academic achievements, activities, thesis topics, or notable projects"),
     start_date: DateSchema.nullable().describe("the date when the candidate began their studies at this institution"),
     end_date: DateSchema.nullable().describe("the date when the candidate completed their studies or graduated from this institution")
-}).describe("Focusing on the formal education section that highlights the candidate's academic background, degrees earned, institutions attended, and relevant coursework or honors.");
+}).describe("Focusing on the formal education section that highlights the candidate's academic background, degrees earned, institutions attended, and relevant coursework or honors.").partial();
 
 export type Education = z.infer<typeof EducationSchema>;

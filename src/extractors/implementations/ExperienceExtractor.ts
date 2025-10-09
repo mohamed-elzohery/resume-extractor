@@ -8,7 +8,7 @@ import { z } from 'zod';
  */
 export class ExperienceExtractor extends BaseExtractor {
     getSchema(): any {
-        return z.array(ExperienceSchema);
+        return ExperienceSchema;
     }
 
     getPromptTemplate(): string {

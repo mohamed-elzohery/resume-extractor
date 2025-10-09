@@ -8,7 +8,7 @@ import { z } from 'zod';
  */
 export class SkillsExtractor extends BaseExtractor {
     getSchema(): any {
-        return z.array(SkillsSchema);
+        return SkillsSchema;
     }
 
     getPromptTemplate(): string {

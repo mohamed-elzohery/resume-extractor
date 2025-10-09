@@ -8,7 +8,7 @@ import { z } from 'zod';
  */
 export class CertificationExtractor extends BaseExtractor {
     getSchema(): any {
-        return z.array(CertificationSchema);
+        return CertificationSchema;
     }
 
     getPromptTemplate(): string {

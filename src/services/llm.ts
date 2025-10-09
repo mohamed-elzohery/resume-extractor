@@ -1,4 +1,4 @@
-import { generateObject } from 'ai';
+import { generateObject, type FilePart, type SystemModelMessage, type UserModelMessage } from 'ai';
 import type { ZodSchema } from 'zod/v3';
 import { openai } from '@ai-sdk/openai';
 import dotenv from 'dotenv';
@@ -43,20 +43,20 @@ export const extractWithLLM = async ({
         }
     });
 
-    const messages: any[] = [];
+    const messages: Array<SystemModelMessage | UserModelMessage> = [];
 
     if (systemPrompt) {
         messages.push({
             role: 'system',
-            content: [{ type: 'text', text: systemPrompt }],
+            content: systemPrompt,
         });
     }
 
-    const fileParts = files.map((file) => ({
+    const fileParts: FilePart[] = files.map((file) => ({
         type: 'file',
-        name: file.name,
-        mimeType: file.mimeType ?? 'application/pdf',
+        mediaType: file.mimeType ?? 'application/pdf',
         data: file.data,
+        filename: file.name,
     }));
 
     messages.push({
@@ -66,7 +66,7 @@ export const extractWithLLM = async ({
 
     messages.push({
         role: 'user',
-        content: [{ type: 'text', text: prompt.trim() }],
+        content: prompt.trim(),
     });
 
     const { object } = await generateObject({
@@ -75,7 +75,6 @@ export const extractWithLLM = async ({
         schema,
         output,
         maxRetries: 0,
-        mode: 'json',
         temperature: 0,
     });
 

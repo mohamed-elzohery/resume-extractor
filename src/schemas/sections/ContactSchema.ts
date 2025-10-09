@@ -8,6 +8,6 @@ export const ContactSchema = z.object({
     title: z.string().nullable().describe("Professional title or designation, such as 'Software Engineer', 'Marketing Specialist' or 'Accountant'"),
     location: LocationSchema.nullable(),
     email: z.email().nullable()
-});
+}).partial();
 
 export type Contact = z.infer<typeof ContactSchema>;
