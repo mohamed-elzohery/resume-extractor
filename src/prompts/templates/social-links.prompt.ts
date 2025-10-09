@@ -15,23 +15,6 @@ EXTRACTION RULES:
 5. Extract the full profile URL when possible, not just usernames
 6. If only a username is provided, construct the full URL using the platform's standard format
 
-EXAMPLES:
-Input: "Follow me on Twitter @johndoe and check my LinkedIn: https://linkedin.com/in/john-doe"
-Output:
-{
-  "social_links": [
-    {
-      "platform": "twitter",
-      "url": "https://twitter.com/johndoe",
-      "username": "johndoe"
-    },
-    {
-      "platform": "linkedin", 
-      "url": "https://linkedin.com/in/john-doe",
-      "username": "john-doe"
-    }
-  ]
-}
 
 Return only valid JSON with no additional text or explanations:
 `;
