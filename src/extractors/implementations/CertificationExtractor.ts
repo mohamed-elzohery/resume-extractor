@@ -8,14 +8,10 @@ import { z } from 'zod';
  */
 export class CertificationExtractor extends BaseExtractor {
     getSchema(): any {
-        return CertificationSchema;
+        return z.object({ certifications: z.array(CertificationSchema) });
     }
 
     getPromptTemplate(): string {
         return CertificationExtractionPromptTemplate;
-    }
-
-    getOutputFormat(): "array" | "object" {
-        return "array";
     }
 }

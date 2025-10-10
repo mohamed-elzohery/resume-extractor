@@ -8,14 +8,11 @@ import { SocialLinksExtractionPromptTemplate } from '../../prompts/templates/soc
  */
 export class SocialLinksExtractor extends BaseExtractor {
     getSchema(): any {
-        return SocialLinkSchema;
+        return z.object({ social_links: z.array(SocialLinkSchema) })
     }
 
     getPromptTemplate(): string {
         return SocialLinksExtractionPromptTemplate;
     }
 
-    getOutputFormat(): "array" | "object" {
-        return "array";
-    }
 }

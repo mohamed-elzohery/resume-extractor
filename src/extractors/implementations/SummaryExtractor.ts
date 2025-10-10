@@ -13,8 +13,4 @@ export class SummaryExtractor extends BaseExtractor {
     getPromptTemplate(): string {
         return SummaryExtractionPromptTemplate;
     }
-
-    getOutputFormat(): "array" | "object" {
-        return "object";
-    }
 }

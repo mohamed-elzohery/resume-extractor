@@ -8,14 +8,10 @@ import { z } from 'zod';
  */
 export class ExperienceExtractor extends BaseExtractor {
     getSchema(): any {
-        return ExperienceSchema;
+        return z.object({ experience: z.array(ExperienceSchema) });
     }
 
     getPromptTemplate(): string {
         return ExperianceExtractionPromptTemplate;
-    }
-
-    getOutputFormat(): "array" | "object" {
-        return "array";
     }
 }

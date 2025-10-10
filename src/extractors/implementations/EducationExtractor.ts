@@ -8,14 +8,10 @@ import { z } from 'zod';
  */
 export class EducationExtractor extends BaseExtractor {
     getSchema(): any {
-        return EducationSchema;
+        return z.object({ education: z.array(EducationSchema) });
     }
 
     getPromptTemplate(): string {
         return EducationExtractionPromptTemplate;
-    }
-
-    getOutputFormat(): "array" | "object" {
-        return "array";
     }
 }

@@ -13,8 +13,4 @@ export class ContactExtractor extends BaseExtractor {
     getPromptTemplate(): string {
         return ContactExtractionPromptTemplate;
     }
-
-    getOutputFormat(): "array" | "object" {
-        return "object";
-    }
 }

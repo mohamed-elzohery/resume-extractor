@@ -49,9 +49,7 @@ class ParallelExtractionStrategy implements ExtractionStrategy {
                     ...entry.overrides,
                     systemPrompt,
                 } satisfies ExtractorExecutionOptions);
-
-                const finalized = entry.instance.finalizeOutput(extraction);
-                (result as Record<string, unknown>)[entry.id] = finalized;
+                (result as Record<string, unknown>)[entry.id] = extraction;
             })
         );
 
@@ -77,16 +75,10 @@ class BatchExtractionStrategy implements ExtractionStrategy {
             schema: combinedSchema,
             prompt: combinedPrompt,
             files,
-            output: 'object',
             systemPrompt,
         });
 
         const result = {} as ExtractionResult<Selections>;
-
-        extractors.forEach((entry) => {
-            const value = (raw as Record<string, unknown>)[entry.id];
-            (result as Record<string, unknown>)[entry.id] = entry.instance.finalizeOutput(value);
-        });
 
         return result;
     }
@@ -143,6 +135,6 @@ export class ResumeExtractionClient<Mode extends ExtractionMode = 'parallel_call
             ...prepared.overrides,
             systemPrompt: this.getSystemPrompt(context?.systemPrompt),
         } satisfies ExtractorExecutionOptions);
-        return prepared.instance.finalizeOutput(result) as SelectionOutput<Selection>;
+        return prepared.instance as SelectionOutput<Selection>;
     }
 }

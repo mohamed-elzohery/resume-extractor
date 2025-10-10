@@ -8,14 +8,11 @@ import { z } from 'zod';
  */
 export class HonorsExtractor extends BaseExtractor {
     getSchema(): any {
-        return HonorsSchema;
+        return z.object({ honors: z.array(HonorsSchema) });
     }
 
     getPromptTemplate(): string {
         return HonorsExtractionPromptTemplate;
     }
 
-    getOutputFormat(): "array" | "object" {
-        return "array";
-    }
 }

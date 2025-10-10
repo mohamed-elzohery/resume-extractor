@@ -8,14 +8,10 @@ import { z } from 'zod';
  */
 export class SkillsExtractor extends BaseExtractor {
     getSchema(): any {
-        return SkillsSchema;
+        return z.object({ skills: z.array(SkillsSchema) });
     }
 
     getPromptTemplate(): string {
         return SkillsExtractionPromptTemplate;
-    }
-
-    getOutputFormat(): "array" | "object" {
-        return "array";
     }
 }

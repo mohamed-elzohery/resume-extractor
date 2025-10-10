@@ -8,14 +8,11 @@ import { z } from 'zod';
  */
 export class ProjectExtractor extends BaseExtractor {
     getSchema(): any {
-        return ProjectSchema;
+        return z.object({ projects: z.array(ProjectSchema) });
     }
 
     getPromptTemplate(): string {
         return ProjectsExtractionPromptTemplate;
     }
 
-    getOutputFormat(): "array" | "object" {
-        return "array";
-    }
 }

@@ -1,6 +1,6 @@
-import type { Buffer } from 'node:buffer';
 import type { ZodSchema } from 'zod/v3';
 import type { BaseExtractor } from '../extractors/base/BaseExtractor';
+import type { Uploadable, ToFileInput } from 'openai/uploads';
 
 export type BuiltInExtractorKey =
     | 'contact'
@@ -16,9 +16,11 @@ export type BuiltInExtractorKey =
 
 export type ExtractionMode = 'parallel_calls' | 'batch_calls';
 
+export type ResumeFileData = Uploadable | ToFileInput | Promise<Uploadable | ToFileInput>;
+
 export interface ResumeFile {
     name: string;
-    data: ArrayBuffer | Uint8Array | Buffer | string;
+    data: ResumeFileData;
     mimeType?: string;
 }
 
