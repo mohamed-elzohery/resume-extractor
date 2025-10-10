@@ -34,12 +34,12 @@ async function runBasicExtraction() {
             { extractor: 'education' },
             { extractor: 'experience' },
             { extractor: 'skills' },
-            // { extractor: 'summary' },
-            // { extractor: 'projects' },
-            // { extractor: 'certification' },
-            // { extractor: 'language' },
-            // { extractor: 'honors' },
-            // { extractor: 'social_links' },
+            { extractor: 'summary' },
+            { extractor: 'projects' },
+            { extractor: 'certification' },
+            { extractor: 'language' },
+            { extractor: 'honors' },
+            { extractor: 'social_links' },
         ]
     });
 

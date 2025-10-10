@@ -8,7 +8,7 @@ import z from 'zod';
  */
 export class LanguageExtractor extends BaseExtractor {
     getSchema(): any {
-        return z.array(LanguageSchema);
+        return z.object({ languages: z.array(LanguageSchema) });
     }
     getPromptTemplate(): string {
         return LanguagesExtractionPromptTemplate;
