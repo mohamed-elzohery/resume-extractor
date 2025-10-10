@@ -1,11 +1,10 @@
-export const SocialLinksExtractionPromptTemplate = `You are a precise data extraction assistant. Your task is to extract social media profile links from the provided text and return them in valid JSON format.
+export const SocialLinksExtractionPromptTemplate = `You are a precise data extraction assistant. Your task is to extract social profile links from the provided text and return them in valid JSON format.
 
 CRITICAL INSTRUCTIONS:
-- Extract ONLY social media profile links that are explicitly mentioned in the text
-- Return ONLY links that match the predefined social media platforms in the JSON schema enum
+- Extract ONLY social media profile links that are explicitly mentioned in the resume
+- Return ONLY links that match the predefined social media platforms in the JSON schema enum provided
 - If a platform is not found, do not include it in the output
 - Do not fabricate or guess any links
-- Return valid JSON that can be parsed with json.loads()
 
 EXTRACTION RULES:
 1. Look for complete URLs (https:// or http://) that point to social media profiles
@@ -15,7 +14,4 @@ EXTRACTION RULES:
 5. Extract the full profile URL when possible, not just usernames
 6. If only a username is provided, construct the full URL using the platform's standard format
 
-
-
-Return only valid JSON with no additional text or explanations:
 `;

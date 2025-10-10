@@ -53,8 +53,8 @@ export const extractWithLLM = async ({
         console.log('Starting extraction with file ids:', uploadedFiles.map((f) => f.id));
 
         const response = await openai.responses.parse({
-            model: 'gpt-4o-mini',
-            temperature: 0,
+            model: 'gpt-4.1-mini-2025-04-14',
+            temperature: .1,
             input: [
                 {
                     role: 'system',
