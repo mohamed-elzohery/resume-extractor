@@ -1,18 +1,18 @@
 import { z } from 'zod';
-import { BaseExtractor } from '../base/BaseExtractor';
+import { Extractor } from '../Extractor';
 import { SocialLinkSchema } from '../../schemas/sections/SocialLinksSchema';
 import { SocialLinksExtractionPromptTemplate } from '../../prompts/templates/social-links.prompt';
 
 /**
  * Social links extractor implementation responsible for capturing online profile references.
  */
-export class SocialLinksExtractor extends BaseExtractor {
-    getSchema(): any {
-        return z.object({ social_links: z.array(SocialLinkSchema) })
-    }
+const defaultSchema = z.object({ social_links: z.array(SocialLinkSchema) });
 
-    getPromptTemplate(): string {
-        return SocialLinksExtractionPromptTemplate;
+export class SocialLinksExtractor extends Extractor<typeof defaultSchema> {
+    constructor(
+        prompt: string = SocialLinksExtractionPromptTemplate,
+        schema: typeof defaultSchema = defaultSchema
+    ) {
+        super(prompt, schema);
     }
-
 }

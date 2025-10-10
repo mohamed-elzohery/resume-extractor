@@ -7,6 +7,6 @@ export const CertificationSchema = z.object({
     expiration_date: z.string().nullable().describe("Expiration date").default(null),
     description: z.string().nullable().describe("any additional details about the certification").default(null),
     url: z.string().nullable().describe("URL to the certification").default(null)
-}).describe("Certification and Licenses for example PMP, AWS Certified Solutions Architect").partial().default({});
+}).describe("Certification and Licenses for example PMP, AWS Certified Solutions Architect")
 
 export type Certification = z.infer<typeof CertificationSchema>;

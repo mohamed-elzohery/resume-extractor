@@ -1,18 +1,18 @@
-import { BaseExtractor } from '../base/BaseExtractor';
+import { z } from 'zod';
+import { Extractor } from '../Extractor';
 import { HonorsSchema } from '../../schemas/sections/HonorsSchema';
 import { HonorsExtractionPromptTemplate } from '../../prompts/templates/honors.prompt';
-import { z } from 'zod';
 
 /**
  * Honors extractor implementation for extracting awards, honors, and recognitions.
  */
-export class HonorsExtractor extends BaseExtractor {
-    getSchema(): any {
-        return z.object({ honors: z.array(HonorsSchema) });
-    }
+const defaultSchema = z.object({ honors: z.array(HonorsSchema) });
 
-    getPromptTemplate(): string {
-        return HonorsExtractionPromptTemplate;
+export class HonorsExtractor extends Extractor<typeof defaultSchema> {
+    constructor(
+        prompt: string = HonorsExtractionPromptTemplate,
+        schema: typeof defaultSchema = defaultSchema
+    ) {
+        super(prompt, schema);
     }
-
 }

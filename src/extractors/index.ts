@@ -1,4 +1,4 @@
-export { BaseExtractor } from './base/BaseExtractor';
+export { Extractor } from './Extractor';
 export { ContactExtractor } from './implementations/ContactExtractor';
 export { ExperienceExtractor } from './implementations/ExperienceExtractor';
 export { EducationExtractor } from './implementations/EducationExtractor';

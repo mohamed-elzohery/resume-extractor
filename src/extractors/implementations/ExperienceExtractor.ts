@@ -1,17 +1,18 @@
-import { BaseExtractor } from '../base/BaseExtractor';
+import { z } from 'zod';
+import { Extractor } from '../Extractor';
 import { ExperienceSchema } from '../../schemas/sections/ExperienceSchema';
 import { ExperianceExtractionPromptTemplate } from '../../prompts/templates/experience.prompt';
-import { z } from 'zod';
 
 /**
  * Experience extractor implementation for extracting work experience information.
  */
-export class ExperienceExtractor extends BaseExtractor {
-    getSchema(): any {
-        return z.object({ experience: z.array(ExperienceSchema) });
-    }
+const defaultSchema = z.object({ experiences: z.array(ExperienceSchema) });
 
-    getPromptTemplate(): string {
-        return ExperianceExtractionPromptTemplate;
+export class ExperienceExtractor extends Extractor<typeof defaultSchema> {
+    constructor(
+        prompt: string = ExperianceExtractionPromptTemplate,
+        schema: typeof defaultSchema = defaultSchema
+    ) {
+        super(prompt, schema);
     }
 }

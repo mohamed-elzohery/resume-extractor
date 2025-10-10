@@ -1,17 +1,18 @@
-import { BaseExtractor } from '../base/BaseExtractor';
+import { z } from 'zod';
+import { Extractor } from '../Extractor';
 import { EducationSchema } from '../../schemas/sections/EducationSchema';
 import { EducationExtractionPromptTemplate } from '../../prompts/templates/education.prompt';
-import { z } from 'zod';
 
 /**
  * Education extractor implementation for extracting educational background information.
  */
-export class EducationExtractor extends BaseExtractor {
-    getSchema(): any {
-        return z.object({ education: z.array(EducationSchema) });
-    }
+const defaultSchema = z.object({ educations: z.array(EducationSchema) });
 
-    getPromptTemplate(): string {
-        return EducationExtractionPromptTemplate;
+export class EducationExtractor extends Extractor<typeof defaultSchema> {
+    constructor(
+        prompt: string = EducationExtractionPromptTemplate,
+        schema: typeof defaultSchema = defaultSchema
+    ) {
+        super(prompt, schema);
     }
 }

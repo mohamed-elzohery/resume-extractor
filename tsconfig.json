@@ -26,5 +26,8 @@
     "**/*.spec.ts",
     "**/*.spec.js",
     "dist"
+  ],
+  "include": [
+    "src/**/*"
   ]
 }

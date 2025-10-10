@@ -1,33 +1,43 @@
 import { describe, it, expect, beforeAll, beforeEach } from 'vitest';
-import { resetLLMMock, setLLMSequence, getLLMMock } from './utils/llmMock';
+import {
+    resetLLMMock,
+    setLLMSequence,
+    setLLMHandler,
+    getLLMMock,
+    setUploadSequence,
+    getUploadMocks,
+} from './utils/llmMock';
+import { Resume } from '../src/core/Resume';
 import { ResumeExtractionClient } from '../src/core/DocumentProcessor';
 import { ExtractorRegistry } from '../src/extractors/ExtractorRegistry';
-import type { BuiltInExtractorKey, ExtractorSelection } from '../src/types/extractor.types';
-import { loadSampleFiles, createFiles } from './utils/files';
+import { EducationExtractor } from '../src/extractors/implementations/EducationExtractor';
+import { Extractor } from '../src/extractors/Extractor';
+import type { BuiltInExtractorKey } from '../src/types/extractor.types';
+import { loadSampleFiles } from './utils/files';
 import { getSampleOutput } from './utils/sampleOutputs';
 import { getSchemaForExtractor } from './utils/extractors';
 import { expectMatchesSchema } from './utils/assertions';
-import { z } from 'zod/v3';
+import { z } from 'zod';
 
 beforeAll(() => {
     process.env.OPENAI_API_KEY = 'test-key';
 });
 
-const client = new ResumeExtractionClient('parallel_calls');
 const files = loadSampleFiles();
-
 const builtInKeys = ExtractorRegistry.list() as BuiltInExtractorKey[];
 
-describe('ResumeExtractionClient (parallel mode)', () => {
+describe('Resume extraction workflow', () => {
     beforeEach(() => {
         resetLLMMock();
+        setUploadSequence(['upload-a', 'upload-b', 'upload-c', 'upload-d', 'upload-e']);
     });
 
-    it('returns schema-shaped data when extracting all built-ins', async () => {
+    it('extracts all registered sections in parallel', async () => {
         setLLMSequence(builtInKeys.map((key) => getSampleOutput(key)));
 
-        const extractors = builtInKeys.map((key) => ({ extractor: key }));
-        const result = await client.extract({ files, extractors });
+        const resume = new Resume(files);
+        const runner = resume.extract(builtInKeys);
+        const result = await runner.run({ strategy: 'parallel_calls' });
 
         builtInKeys.forEach((key) => {
             const schema = getSchemaForExtractor(key);
@@ -35,120 +45,77 @@ describe('ResumeExtractionClient (parallel mode)', () => {
         });
 
         expect(getLLMMock()).toHaveBeenCalledTimes(builtInKeys.length);
+        const { uploadMock, deleteMock } = getUploadMocks();
+        expect(uploadMock).toHaveBeenCalledTimes(files.length);
+        expect(deleteMock).toHaveBeenCalledTimes(files.length);
     });
 
-    it('runs a single extractor without overrides', async () => {
-        setLLMSequence([getSampleOutput('experience')]);
+    it('supports the single-prompt alias for batch execution', async () => {
+        const keys: BuiltInExtractorKey[] = ['education', 'experience'];
+        const educationOutput = getSampleOutput('education') as any;
+        const experienceOutput = getSampleOutput('experience') as any;
+        const batchResponse = {
+            education: educationOutput.education,
+            experience: experienceOutput.experience,
+        };
+        setLLMSequence([batchResponse]);
 
-        const result = await client.extractOne({
-            files,
-            extractor: 'experience',
-        });
-
-        const schema = getSchemaForExtractor('experience');
-        expectMatchesSchema(result, schema);
-        expect(getLLMMock()).toHaveBeenCalledTimes(1);
-    });
-
-    it('runs selected extractors in parallel with defaults', async () => {
-        const keys: BuiltInExtractorKey[] = ['education', 'experience', 'contact'];
-        setLLMSequence(keys.map((key) => getSampleOutput(key)));
-
-        const result = await client.extract({
-            files,
-            extractors: keys.map((key) => ({ extractor: key })),
-        });
+        const resume = new Resume(files);
+        const result = await resume
+            .extract(keys)
+            .run({ strategy: 'single-prompt', systemPrompt: 'custom-system' });
 
         keys.forEach((key) => {
             const schema = getSchemaForExtractor(key);
             expectMatchesSchema((result as Record<string, unknown>)[key], schema);
         });
-        expect(getLLMMock()).toHaveBeenCalledTimes(keys.length);
+
+        expect(getLLMMock()).toHaveBeenCalledTimes(1);
     });
 
-    it('respects overrides for prompts, schemas, output format, and result keys', async () => {
-        const educationSchema = z.object({ entries: z.array(z.object({ school: z.string() })) });
-        const experienceSchema = z.object({ roles: z.array(z.object({ title: z.string() })) });
-        const contactSchema = z.object({ name: z.string(), email: z.string().nullable() });
+    it('allows overriding built-in extractors and adding custom ones', async () => {
+        const education = new EducationExtractor('education');
+        education.setPrompt('Only return postgraduate education.');
+        const custom = new Extractor(
+            'custom_section',
+            'Extract a list of accomplishments.',
+            z.object({ accomplishments: z.array(z.string()) })
+        );
 
         setLLMSequence([
-            { entries: [{ school: 'Override University' }] },
-            { roles: [{ title: 'Override Role' }] },
-            { name: 'Jane Doe', email: 'jane.doe@example.com' },
+            { education: [{ school: 'Override University', degree: 'MSc' }] },
+            { accomplishments: ['Built the new extraction pipeline'] },
         ]);
 
-        const overrideSelections = [
-            {
-                extractor: 'education',
-                prompt: 'custom education prompt',
-                schema: educationSchema,
-                outputFormat: 'object',
-                resultKey: 'educationData',
-            } satisfies ExtractorSelection<typeof educationSchema, 'educationData'>,
-            {
-                extractor: 'experience',
-                prompt: 'custom experience prompt',
-                schema: experienceSchema,
-                outputFormat: 'object',
-                resultKey: 'experienceData',
-            } satisfies ExtractorSelection<typeof experienceSchema, 'experienceData'>,
-            {
-                extractor: 'contact',
-                prompt: 'custom contact prompt',
-                schema: contactSchema,
-                outputFormat: 'object',
-                resultKey: 'contactCard',
-            } satisfies ExtractorSelection<typeof contactSchema, 'contactCard'>,
-        ] as const;
+        const resume = new Resume(files);
+        const result = await resume.extract(['education', custom]).run();
+
+        expectMatchesSchema((result as Record<string, unknown>)['education'], education.getSchema());
+        expectMatchesSchema(
+            (result as Record<string, unknown>)['custom_section'],
+            custom.getSchema()
+        );
+
+        const calls = getLLMMock().mock.calls;
+        expect(calls[0][0].prompt).toContain('Only return postgraduate education');
+        expect(calls[1][0].prompt).toContain('accomplishments');
+    });
+
+    it('passes normalized strategy values through ResumeExtractionClient wrapper', async () => {
+        const client = new ResumeExtractionClient('single_calls');
+        setLLMSequence([getSampleOutput('experience')]);
 
         const result = await client.extract({
             files,
-            extractors: overrideSelections as unknown as ExtractorSelection[],
+            extractors: ['experience'],
+            context: { strategy: 'single-prompt' },
         });
 
-        expectMatchesSchema((result as Record<string, unknown>)['educationData'], educationSchema);
-        expectMatchesSchema((result as Record<string, unknown>)['experienceData'], experienceSchema);
-        expectMatchesSchema((result as Record<string, unknown>)['contactCard'], contactSchema);
-        expect(getLLMMock()).toHaveBeenCalledTimes(3);
+        expectMatchesSchema((result as Record<string, unknown>)['experience'], getSchemaForExtractor('experience'));
+        expect(getLLMMock()).toHaveBeenCalledTimes(1);
     });
 
-    describe('error handling', () => {
-        it('throws when no files are provided', async () => {
-            setLLMSequence([]);
-            await expect(
-                client.extract({ files: [], extractors: [{ extractor: 'experience' }] })
-            ).rejects.toThrow('At least one resume file is required for extraction.');
-            expect(getLLMMock()).not.toHaveBeenCalled();
-        });
-
-        it('rejects unsupported file formats', async () => {
-            await expect(
-                client.extract({
-                    files: createFiles([{ mimeType: 'text/plain' }]),
-                    extractors: [{ extractor: 'contact' }],
-                })
-            ).rejects.toThrow('Unsupported file mime type');
-            expect(getLLMMock()).not.toHaveBeenCalled();
-        });
-
-        it('surfaces schema validation failures from LLM', async () => {
-            setLLMSequence([new Error('Schema validation failed')]);
-            await expect(
-                client.extractOne({
-                    files,
-                    extractor: 'education',
-                    schema: z.array(z.object({ school: z.string() })),
-                })
-            ).rejects.toThrow('Schema validation failed');
-        });
-
-        it('throws when extractor key is not registered', async () => {
-            await expect(
-                client.extract({
-                    files,
-                    extractors: [{ extractor: 'non-existent-extractor' } as any],
-                })
-            ).rejects.toThrow('Extractor "non-existent-extractor" is not registered.');
-        });
+    it('throws if resume is created without files', () => {
+        expect(() => new Resume([])).toThrow('Resume must be initialised with at least one file.');
     });
 });

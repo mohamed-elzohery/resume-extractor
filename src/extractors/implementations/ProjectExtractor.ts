@@ -1,18 +1,18 @@
-import { BaseExtractor } from '../base/BaseExtractor';
+import { z } from 'zod';
+import { Extractor } from '../Extractor';
 import { ProjectSchema } from '../../schemas/sections/ProjectSchema';
 import { ProjectsExtractionPromptTemplate } from '../../prompts/templates/projects.prompt';
-import { z } from 'zod';
 
 /**
  * Project extractor implementation for extracting project experience and portfolio.
  */
-export class ProjectExtractor extends BaseExtractor {
-    getSchema(): any {
-        return z.object({ projects: z.array(ProjectSchema) });
-    }
+const defaultSchema = z.object({ projects: z.array(ProjectSchema) });
 
-    getPromptTemplate(): string {
-        return ProjectsExtractionPromptTemplate;
+export class ProjectExtractor extends Extractor<typeof defaultSchema> {
+    constructor(
+        prompt: string = ProjectsExtractionPromptTemplate,
+        schema: typeof defaultSchema = defaultSchema
+    ) {
+        super(prompt, schema);
     }
-
 }

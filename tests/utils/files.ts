@@ -1,14 +1,14 @@
 import { readFileSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import type { ResumeFile } from '../../src/types/extractor.types';
+import type { ResumeFileLike } from '../../src/types/extractor.types';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 const SAMPLE_FILE_PATH = resolve(__dirname, '../../sample-resume.pdf');
 
-export const loadSampleFiles = (): ResumeFile[] => [
+export const loadSampleFiles = (): ResumeFileLike[] => [
     {
         name: 'sample-resume.pdf',
         data: readFileSync(SAMPLE_FILE_PATH),
@@ -16,7 +16,7 @@ export const loadSampleFiles = (): ResumeFile[] => [
     },
 ];
 
-export const createFiles = (overrides: Partial<ResumeFile>[] = []): ResumeFile[] => {
+export const createFiles = (overrides: Partial<ResumeFileLike>[] = []): ResumeFileLike[] => {
     if (!overrides.length) {
         return loadSampleFiles();
     }

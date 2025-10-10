@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { DateSchema } from '../base/BaseSchema';
+import { DateSchema } from '../base/BaseSchemas';
 
 export const ExperienceSchema = z.object({
     title: z.string().describe("Exact job title as written in the resume, like 'Senior Software Engineer'.").nullable().default(null),
@@ -11,6 +11,6 @@ export const ExperienceSchema = z.object({
     end_date: DateSchema.nullable().default(null),
     department: z.string().nullable().describe("Specific department, division, or team if mentioned.").default(null),
     is_current: z.boolean().nullable().default(null)
-}).describe("Work Experience / Professional Experience / Employment History").partial().default({});
+}).describe("Work Experience / Professional Experience / Employment History")
 
 export type Experience = z.infer<typeof ExperienceSchema>;

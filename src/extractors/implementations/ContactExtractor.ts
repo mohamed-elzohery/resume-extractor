@@ -1,16 +1,18 @@
-import { BaseExtractor } from '../base/BaseExtractor';
+import { z } from 'zod';
+import { Extractor } from '../Extractor';
 import { ContactSchema } from '../../schemas/sections/ContactSchema';
 import { ContactExtractionPromptTemplate } from '../../prompts/templates/contact.prompt';
 
 /**
  * Contact extractor implementation for extracting personal contact information.
  */
-export class ContactExtractor extends BaseExtractor {
-    getSchema(): any {
-        return ContactSchema;
-    }
+const defaultSchema = z.object({ contact: ContactSchema });
 
-    getPromptTemplate(): string {
-        return ContactExtractionPromptTemplate;
+export class ContactExtractor extends Extractor<typeof defaultSchema> {
+    constructor(
+        prompt: string = ContactExtractionPromptTemplate,
+        schema: typeof defaultSchema = defaultSchema
+    ) {
+        super(prompt, schema);
     }
 }

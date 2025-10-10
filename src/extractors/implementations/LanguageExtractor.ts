@@ -1,16 +1,18 @@
-import { BaseExtractor } from '../base/BaseExtractor';
+import { z } from 'zod';
+import { Extractor } from '../Extractor';
 import { LanguageSchema } from '../../schemas/sections/LanguageSchema';
 import { LanguagesExtractionPromptTemplate } from '../../prompts/templates/language.prompt';
-import z from 'zod';
 
 /**
  * Language extractor implementation for extracting language proficiencies.
  */
-export class LanguageExtractor extends BaseExtractor {
-    getSchema(): any {
-        return z.object({ languages: z.array(LanguageSchema) });
-    }
-    getPromptTemplate(): string {
-        return LanguagesExtractionPromptTemplate;
+const defaultSchema = z.object({ languages: z.array(LanguageSchema) });
+
+export class LanguageExtractor extends Extractor<typeof defaultSchema> {
+    constructor(
+        prompt: string = LanguagesExtractionPromptTemplate,
+        schema: typeof defaultSchema = defaultSchema
+    ) {
+        super(prompt, schema);
     }
 }

@@ -1,5 +1,4 @@
-import type { BuiltInExtractorKey } from '../types/extractor.types';
-import type { BaseExtractor } from './base/BaseExtractor';
+import type { Extractor } from './Extractor';
 import { CertificationExtractor } from './implementations/CertificationExtractor';
 import { ContactExtractor } from './implementations/ContactExtractor';
 import { EducationExtractor } from './implementations/EducationExtractor';
@@ -11,7 +10,19 @@ import { SkillsExtractor } from './implementations/SkillsExtractor';
 import { SocialLinksExtractor } from './implementations/SocialLinksExtractor';
 import { SummaryExtractor } from './implementations/SummaryExtractor';
 
-type ExtractorFactoryFn = () => BaseExtractor;
+export type BuiltInExtractorKey =
+    | 'contact'
+    | 'experience'
+    | 'education'
+    | 'skills'
+    | 'projects'
+    | 'certification'
+    | 'language'
+    | 'summary'
+    | 'honors'
+    | 'social_links';
+
+type ExtractorFactoryFn = () => Extractor;
 
 const registry = new Map<string, ExtractorFactoryFn>();
 
@@ -39,7 +50,7 @@ export const ExtractorRegistry = {
     has(key: string) {
         return registry.has(key);
     },
-    create(key: string): BaseExtractor {
+    create(key: string): Extractor {
         const factory = registry.get(key);
         if (!factory) {
             throw new Error(`Extractor "${key}" is not registered.`);

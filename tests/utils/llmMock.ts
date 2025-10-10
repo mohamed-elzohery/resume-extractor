@@ -1,24 +1,31 @@
 import { vi } from 'vitest';
 
-const generateObjectMock = vi.fn();
+const extractWithLLMMock = vi.fn();
+const uploadMock = vi.fn();
+const deleteMock = vi.fn();
 
-vi.mock('ai', () => ({
-    generateObject: generateObjectMock,
-}));
-
-vi.mock('@ai-sdk/openai', () => ({
-    openai: vi.fn(() => ({ id: 'mock-model' })),
+vi.mock('../../src/services/llm', () => ({
+    extractWithLLM: extractWithLLMMock,
+    getOpenAIClient: () => ({
+        files: {
+            create: uploadMock,
+            delete: deleteMock,
+        },
+    }),
 }));
 
 export const resetLLMMock = () => {
-    generateObjectMock.mockReset();
+    extractWithLLMMock.mockReset();
+    uploadMock.mockReset();
+    deleteMock.mockReset();
+    deleteMock.mockImplementation(async () => { });
 };
 
 export const setLLMSequence = (
     sequence: Array<unknown | ((args: any) => unknown) | Error>
 ) => {
     let callIndex = 0;
-    generateObjectMock.mockImplementation(async (args: any) => {
+    extractWithLLMMock.mockImplementation(async (args: any) => {
         if (callIndex >= sequence.length) {
             throw new Error('No mock LLM response configured for call index ' + callIndex);
         }
@@ -28,20 +35,20 @@ export const setLLMSequence = (
             throw current;
         }
 
-        const value = typeof current === 'function' ? current(args) : current;
-        return { object: value };
+        return typeof current === 'function' ? current(args) : current;
     });
 };
 
 export const setLLMHandler = (handler: (args: any, callIndex: number) => unknown) => {
     let callIndex = 0;
-    generateObjectMock.mockImplementation(async (args: any) => {
-        const value = handler(args, callIndex++);
-        if (value instanceof Error) {
-            throw value;
-        }
-        return { object: value };
-    });
+    extractWithLLMMock.mockImplementation(async (args: any) => handler(args, callIndex++));
 };
 
-export const getLLMMock = () => generateObjectMock;
+export const getLLMMock = () => extractWithLLMMock;
+
+export const getUploadMocks = () => ({ uploadMock, deleteMock });
+
+export const setUploadSequence = (ids: string[]) => {
+    let index = 0;
+    uploadMock.mockImplementation(async () => ({ id: ids[index++] ?? `file-${index}` }));
+};

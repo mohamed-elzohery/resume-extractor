@@ -1,9 +1,7 @@
-import type { ZodSchema } from 'zod/v3';
+import type { ZodSchema } from 'zod';
 import dotenv from 'dotenv';
-import type { ResumeFile } from '../types/extractor.types';
 import OpenAI from 'openai';
-import { zodResponseFormat, zodTextFormat } from 'openai/helpers/zod.mjs';
-import { toFile } from 'openai/uploads';
+import { zodTextFormat } from 'openai/helpers/zod.mjs';
 
 dotenv.config();
 
@@ -13,48 +11,31 @@ const openai = new OpenAI({
 
 const DEFAULT_SYSTEM_PROMPT = 'You are an accurate resume extractor assistant.';
 
-const toUploadable = async (file: ResumeFile) => {
-    const mimeType = file.mimeType ?? 'application/octet-stream';
-    return toFile(file.data, file.name, { type: mimeType });
-};
+export const getOpenAIClient = () => openai;
 
 export interface LLMExtractionOptions {
     schema: ZodSchema;
     prompt: string;
-    files: ResumeFile[];
+    fileIds: string[];
     systemPrompt?: string;
 }
 
 export const extractWithLLM = async ({
     schema,
     prompt,
-    files,
+    fileIds,
     systemPrompt,
 }: LLMExtractionOptions) => {
-    let uploadedFiles: Awaited<ReturnType<typeof openai.files.create>>[] = [];
-
+    if (!fileIds.length) {
+        throw new Error('No file ids were provided for extraction.');
+    }
     try {
-        uploadedFiles = await Promise.all(
-            files.map(async (file) => {
-                console.log(`Uploading resume: ${file.name}`);
-                const prepared = await toUploadable(file);
-
-                return openai.files.create({
-                    file: prepared,
-                    purpose: 'user_data',
-                });
-            })
-        );
-
-        if (uploadedFiles.length === 0) {
-            throw new Error('No files were provided for extraction.');
-        }
-
-        console.log('Starting extraction with file ids:', uploadedFiles.map((f) => f.id));
+        const textFormat = zodTextFormat(schema, 'resume');
+        sanitizeRefKeywords(textFormat);
 
         const response = await openai.responses.parse({
             model: 'gpt-4.1-mini-2025-04-14',
-            temperature: .1,
+            temperature: 0.1,
             input: [
                 {
                     role: 'system',
@@ -63,9 +44,9 @@ export const extractWithLLM = async ({
                 {
                     role: 'user',
                     content: [
-                        ...uploadedFiles.map((fileUpload) => ({
+                        ...fileIds.map((fileId) => ({
                             type: 'input_file' as const,
-                            file_id: fileUpload.id,
+                            file_id: fileId,
                         })),
                         {
                             type: 'input_text' as const,
@@ -73,25 +54,39 @@ export const extractWithLLM = async ({
                         },
                     ],
                 },
-            ], text: {
-                format: zodTextFormat(schema, 'resume'),
+            ],
+            text: {
+                format: textFormat,
             },
         });
-
-        return (response.output_parsed) as any;
+        console.log("response", response.usage)
+        return response.output_parsed as unknown;
     } catch (error) {
         console.error('Error during extraction:', error);
         throw error;
-    } finally {
-        await Promise.allSettled(
-            uploadedFiles.map(async (fileUpload) => {
-                try {
-                    await openai.files.delete(fileUpload.id);
-                } catch (deleteError) {
-                    console.warn(`Failed to delete uploaded file ${fileUpload.id}:`, deleteError);
-                }
-            })
-        );
+    }
+};
+
+
+const sanitizeRefKeywords = (format: ReturnType<typeof zodTextFormat>) => {
+    stripInvalidRefKeywords(format);
+};
+
+const stripInvalidRefKeywords = (node: unknown): void => {
+    if (Array.isArray(node)) {
+        node.forEach(stripInvalidRefKeywords);
+        return;
+    }
+
+    if (node && typeof node === 'object') {
+        const record = node as Record<string, unknown>;
+
+        if (typeof record.$ref === 'string') {
+            delete record.description;
+            delete record.default;
+        }
+
+        Object.values(record).forEach(stripInvalidRefKeywords);
     }
 };
 
